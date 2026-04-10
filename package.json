@@ -1,0 +1,70 @@
+{
+  "name": "cursor-plan-view",
+  "displayName": "Cursor Plan View",
+  "description": "Rich plan viewer for .plan.md files with interactive todo checklists, progress bars, and markdown rendering — matching Cursor IDE's native plan experience.",
+  "version": "0.2.1",
+  "publisher": "nasares",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "cursor",
+    "plan",
+    "markdown",
+    "todo",
+    "checklist"
+  ],
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snasa045/cursor-plan-view"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "cursorPlanView.planEditor",
+        "displayName": "Plan View",
+        "selector": [
+          {
+            "filenamePattern": "*.plan.md"
+          }
+        ],
+        "priority": "default"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
+    "lint": "eslint src --ext ts",
+    "test": "mocha --require ts-node/register 'test/suite/**/*.test.ts'",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "dependencies": {
+    "highlight.js": "^11.11.1",
+    "js-yaml": "^4.1.0",
+    "marked": "^15.0.0",
+    "marked-highlight": "^2.2.4"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.22.0",
+    "esbuild": "^0.20.0",
+    "mocha": "^10.2.0",
+    "sharp": "^0.34.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

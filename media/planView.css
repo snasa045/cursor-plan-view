@@ -1,0 +1,540 @@
+/* ── Cursor Plan View — Theme-Aware Stylesheet ─────────────────────── */
+
+/* Base */
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--vscode-editor-background, #1e1e1e);
+  color: var(--vscode-foreground, #cccccc);
+  font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  font-size: var(--vscode-font-size, 13px);
+  line-height: 1.6;
+}
+
+.plan-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 32px;
+}
+
+/* ── Header ───────────────────────────────────────────────────────── */
+
+.plan-header {
+  margin-bottom: 20px;
+}
+
+.plan-title {
+  font-size: 1.6em;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--vscode-foreground, #cccccc);
+}
+
+.plan-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75em;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--vscode-badge-background, #4d4d4d);
+  color: var(--vscode-badge-foreground, #ffffff);
+  margin-bottom: 8px;
+}
+
+.plan-overview {
+  margin: 8px 0 0 0;
+  color: var(--vscode-descriptionForeground, #999999);
+  font-size: 0.95em;
+}
+
+/* ── Progress Bar ─────────────────────────────────────────────────── */
+
+.plan-progress {
+  margin-bottom: 20px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 0.85em;
+  color: var(--vscode-descriptionForeground, #999999);
+}
+
+.progress-count {
+  font-weight: 600;
+  color: var(--vscode-foreground, #cccccc);
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--vscode-editorWidget-background, #2d2d2d);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--vscode-progressBar-background, #0078d4);
+  transition: width 0.3s ease;
+}
+
+/* ── Status Filter Bar ────────────────────────────────────────────── */
+
+.todo-filter-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.todo-filter-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--vscode-panel-border, #444444);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--vscode-descriptionForeground, #999999);
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.todo-filter-btn:hover {
+  border-color: var(--vscode-focusBorder, #0078d4);
+  color: var(--vscode-foreground, #cccccc);
+}
+
+.todo-filter-btn.active {
+  background: var(--vscode-button-background, #0078d4);
+  color: var(--vscode-button-foreground, #ffffff);
+  border-color: var(--vscode-button-background, #0078d4);
+}
+
+/* CSS-only filter: hide non-matching items based on data-filter attribute */
+.plan-todos[data-filter="pending"] .todo-completed,
+.plan-todos[data-filter="pending"] .todo-done {
+  display: none;
+}
+
+.plan-todos[data-filter="completed"] .todo-pending,
+.plan-todos[data-filter="completed"] .todo-in-progress,
+.plan-todos[data-filter="completed"] .todo-unknown,
+.plan-todos[data-filter="completed"] .todo-error {
+  display: none;
+}
+
+/* ── Todo Items ───────────────────────────────────────────────────── */
+
+.plan-todos {
+  margin-bottom: 20px;
+}
+
+.todo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  position: relative;
+}
+
+.todo-item:hover {
+  background: var(--vscode-list-hoverBackground, #2a2d2e);
+}
+
+/* Delete button — hidden by default, shown on hover */
+.todo-delete-btn {
+  display: none;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--vscode-descriptionForeground, #999999);
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  border-radius: 3px;
+  margin-top: 1px;
+}
+
+.todo-item:hover .todo-delete-btn {
+  display: inline-block;
+}
+
+/* Drag handle — hidden by default, shown on hover */
+.todo-drag-handle {
+  display: none;
+  flex-shrink: 0;
+  cursor: grab;
+  color: var(--vscode-descriptionForeground, #999999);
+  font-size: 1.2em;
+  line-height: 1;
+  padding: 0 2px;
+  user-select: none;
+}
+
+.todo-item:hover .todo-drag-handle {
+  display: inline-block;
+}
+
+.todo-item.dragging {
+  opacity: 0.4;
+}
+
+.todo-item.drag-over {
+  border-top: 2px solid var(--vscode-focusBorder, #0078d4);
+}
+
+.todo-delete-btn:hover {
+  color: var(--vscode-editorError-foreground, #f14c4c);
+  background: color-mix(in srgb, var(--vscode-editorError-foreground, #f14c4c) 15%, transparent);
+}
+
+.todo-checkbox {
+  margin-top: 3px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--vscode-checkbox-background, #0078d4);
+}
+
+.todo-content {
+  flex: 1;
+  word-break: break-word;
+  cursor: text;
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin: -1px -4px;
+  outline: none;
+}
+
+.todo-status-badge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75em;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+/* Status-specific styles */
+.todo-completed .todo-content,
+.todo-done .todo-content {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.status-badge-pending {
+  background: color-mix(in srgb, var(--vscode-editorWarning-foreground, #cca700) 20%, transparent);
+  color: var(--vscode-editorWarning-foreground, #cca700);
+}
+
+.status-badge-completed,
+.status-badge-done {
+  background: color-mix(in srgb, var(--vscode-testing-iconPassed, #73c991) 20%, transparent);
+  color: var(--vscode-testing-iconPassed, #73c991);
+}
+
+.status-badge-in-progress {
+  background: color-mix(in srgb, var(--vscode-editorInfo-foreground, #3794ff) 20%, transparent);
+  color: var(--vscode-editorInfo-foreground, #3794ff);
+}
+
+.status-badge-unknown,
+.status-badge-error {
+  background: color-mix(in srgb, var(--vscode-editorError-foreground, #f14c4c) 20%, transparent);
+  color: var(--vscode-editorError-foreground, #f14c4c);
+}
+
+/* ── Add task button ─────────────────────────────────────────────── */
+
+.add-todo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  margin-top: 8px;
+  border: 1px dashed var(--vscode-panel-border, #444444);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--vscode-descriptionForeground, #999999);
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.add-todo-btn:hover {
+  border-color: var(--vscode-focusBorder, #0078d4);
+  color: var(--vscode-foreground, #cccccc);
+  background: var(--vscode-list-hoverBackground, #2a2d2e);
+}
+
+/* ── Editable fields (title, overview) ───────────────────────────── */
+
+.plan-title.editable-field,
+.plan-overview.editable-field {
+  cursor: text;
+  border-radius: 3px;
+  outline: none;
+}
+
+.plan-overview-empty:empty::before {
+  content: attr(data-placeholder);
+  color: var(--vscode-descriptionForeground, #999999);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ── Markdown body editing ────────────────────────────────────────── */
+
+.plan-body {
+  cursor: text;
+  border-radius: 4px;
+  outline: none;
+  min-height: 32px;
+  padding: 4px;
+}
+
+.plan-body:empty::before {
+  content: attr(data-placeholder);
+  color: var(--vscode-descriptionForeground, #999999);
+  opacity: 0.5;
+  font-style: italic;
+  pointer-events: none;
+}
+
+
+
+.plan-divider {
+  border: none;
+  border-top: 1px solid var(--vscode-panel-border, #444444);
+  margin: 24px 0;
+}
+
+/* ── Markdown Body ────────────────────────────────────────────────── */
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  color: var(--vscode-foreground, #cccccc);
+  margin-top: 24px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.markdown-body h1 { font-size: 1.5em; border-bottom: 1px solid var(--vscode-panel-border, #444444); padding-bottom: 6px; }
+.markdown-body h2 { font-size: 1.3em; }
+.markdown-body h3 { font-size: 1.15em; }
+
+.markdown-body p {
+  margin: 8px 0;
+}
+
+.markdown-body a {
+  color: var(--vscode-textLink-foreground, #3794ff);
+  text-decoration: none;
+}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+.markdown-body code {
+  font-family: var(--vscode-editor-font-family, 'Menlo', 'Consolas', monospace);
+  font-size: 0.85em;
+  background: color-mix(in srgb, var(--vscode-foreground, #cccccc) 10%, var(--vscode-editor-background, #1e1e1e));
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 8%, transparent);
+}
+
+/* ── Code block wrapper with header ──────────────────────────────── */
+
+.code-block-wrapper {
+  position: relative;
+  margin: 16px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 12%, transparent);
+}
+
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: color-mix(in srgb, var(--vscode-foreground, #cccccc) 6%, var(--vscode-editor-background, #1e1e1e));
+  border-bottom: 1px solid color-mix(in srgb, var(--vscode-foreground, #cccccc) 8%, transparent);
+}
+
+.code-block-lang {
+  font-family: var(--vscode-editor-font-family, 'Menlo', 'Consolas', monospace);
+  font-size: 0.75em;
+  color: var(--vscode-descriptionForeground, #999999);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.code-copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--vscode-descriptionForeground, #999999);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.code-copy-btn:hover {
+  color: var(--vscode-foreground, #cccccc);
+  background: color-mix(in srgb, var(--vscode-foreground, #cccccc) 10%, transparent);
+}
+
+.code-copy-btn.copied {
+  color: var(--vscode-testing-iconPassed, #73c991);
+}
+
+.code-block-wrapper .markdown-body pre,
+.code-block-wrapper pre {
+  margin: 0;
+  border-radius: 0;
+  border: none;
+}
+
+.markdown-body pre {
+  background: color-mix(in srgb, var(--vscode-foreground, #cccccc) 4%, var(--vscode-editor-background, #1e1e1e));
+  padding: 14px 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0;
+  line-height: 1.5;
+}
+
+.markdown-body pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+}
+
+.markdown-body blockquote {
+  border-left: 3px solid var(--vscode-textBlockQuote-border, #555555);
+  margin: 12px 0;
+  padding: 4px 16px;
+  color: var(--vscode-descriptionForeground, #999999);
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid var(--vscode-panel-border, #444444);
+  padding: 6px 12px;
+  text-align: left;
+}
+
+.markdown-body th {
+  background: var(--vscode-editorGroupHeader-tabsBackground, #252526);
+  font-weight: 600;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 24px;
+  margin: 8px 0;
+}
+
+.markdown-body li {
+  margin: 4px 0;
+}
+
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--vscode-panel-border, #444444);
+  margin: 16px 0;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  border-radius: 4px;
+}
+
+/* Markdown task list checkboxes — interactive since body is contenteditable */
+.markdown-body li > input[type="checkbox"] {
+  margin-right: 6px;
+  cursor: pointer;
+  accent-color: var(--vscode-checkbox-background, #0078d4);
+}
+
+/* ── Syntax highlighting (VS Code dark+/light+ theme colors) ─────── */
+
+.vscode-dark .hljs-keyword,
+.vscode-dark .hljs-selector-tag,
+.vscode-dark .hljs-built_in { color: #569cd6; }
+
+.vscode-dark .hljs-string,
+.vscode-dark .hljs-attribute { color: #ce9178; }
+
+.vscode-dark .hljs-number,
+.vscode-dark .hljs-literal { color: #b5cea8; }
+
+.vscode-dark .hljs-comment { color: #6a9955; }
+
+.vscode-dark .hljs-title,
+.vscode-dark .hljs-title.function_ { color: #dcdcaa; }
+
+.vscode-dark .hljs-type,
+.vscode-dark .hljs-title.class_ { color: #4ec9b0; }
+
+.vscode-dark .hljs-variable,
+.vscode-dark .hljs-params,
+.vscode-dark .hljs-attr { color: #9cdcfe; }
+
+.vscode-dark .hljs-meta,
+.vscode-dark .hljs-meta .hljs-keyword { color: #c586c0; }
+
+.vscode-dark .hljs-punctuation { color: #d4d4d4; }
+
+/* Light theme */
+.vscode-light .hljs-keyword,
+.vscode-light .hljs-selector-tag,
+.vscode-light .hljs-built_in { color: #0000ff; }
+
+.vscode-light .hljs-string,
+.vscode-light .hljs-attribute { color: #a31515; }
+
+.vscode-light .hljs-number,
+.vscode-light .hljs-literal { color: #098658; }
+
+.vscode-light .hljs-comment { color: #008000; }
+
+.vscode-light .hljs-title,
+.vscode-light .hljs-title.function_ { color: #795e26; }
+
+.vscode-light .hljs-type,
+.vscode-light .hljs-title.class_ { color: #267f99; }
+
+.vscode-light .hljs-variable,
+.vscode-light .hljs-params,
+.vscode-light .hljs-attr { color: #001080; }
+
+.vscode-light .hljs-meta,
+.vscode-light .hljs-meta .hljs-keyword { color: #af00db; }
+
+.vscode-light .hljs-punctuation { color: #000000; }
