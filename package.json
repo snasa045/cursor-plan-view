@@ -2,7 +2,7 @@
   "name": "cursor-plan-view",
   "displayName": "Cursor Plan View",
   "description": "Rich plan viewer for .plan.md files with interactive todo checklists, progress bars, and markdown rendering — matching Cursor IDE's native plan experience.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "nasares",
   "license": "MIT",
   "engines": {
@@ -38,7 +38,39 @@
         ],
         "priority": "default"
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "cursorPlanView.newPlanFile",
+        "title": "New Plan File",
+        "category": "Plan View",
+        "icon": "$(add)"
+      },
+      {
+        "command": "cursorPlanView.exportPlan",
+        "title": "Export Plan",
+        "category": "Plan View",
+        "icon": "$(export)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "cursorPlanView.newPlanFile"
+        },
+        {
+          "command": "cursorPlanView.exportPlan",
+          "when": "activeCustomEditorId == 'cursorPlanView.planEditor'"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "cursorPlanView.exportPlan",
+          "when": "activeCustomEditorId == 'cursorPlanView.planEditor'",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run build",

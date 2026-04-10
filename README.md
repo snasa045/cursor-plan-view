@@ -175,6 +175,39 @@ Filtering is instant (CSS-only, no re-render).
 
 Scroll position is maintained across checkbox toggles, add/delete operations, and undo/redo. No more jumping back to the top after every interaction.
 
+### Status Cycling
+
+Click any task's status badge to cycle through statuses. The badge rotates: **pending → in-progress → completed → pending**. Faster than toggling the checkbox when you want to mark a task as in-progress rather than jumping straight to completed.
+
+### Keyboard Shortcut
+
+Press **Enter** to quickly add a new task. The new task appears at the bottom of the todo list with status `pending` and an auto-generated UUID — ready to edit immediately.
+
+### New Plan File
+
+Open the command palette (`Cmd+Shift+P`) and run **Plan View: New Plan File**. A save dialog lets you choose a location and name. The file is created with valid YAML frontmatter and two placeholder tasks, then immediately opens in Plan View.
+
+### Search
+
+Press **Ctrl+F** / **Cmd+F** to open the search bar at the top of the plan view. As you type:
+
+- Matching text is highlighted in both the todo list and the markdown body
+- Non-matching todos are hidden so you can focus on relevant tasks
+- A match count shows how many results were found
+- Press **Escape** or click **×** to close search and clear highlights
+
+### Export
+
+Click the **$(export) Export** icon in the editor title bar, or run **Plan View: Export Plan** from the command palette. Three formats are available:
+
+| Format | Output |
+| --- | --- |
+| **HTML** | Standalone `.html` file — opens in any browser, no VS Code required |
+| **PDF** | Opens a print-ready page in your browser; use **Cmd+P → Save as PDF** |
+| **Docx** | Word-compatible `.docx` file — opens in Word and LibreOffice |
+
+The exported file is saved next to the `.plan.md` source and revealed in Finder / Explorer.
+
 ## Plan File Format
 
 The extension reads the YAML frontmatter format used by Cursor's plan feature:
@@ -231,6 +264,18 @@ All changes integrate with VS Code's edit history. Undo, redo, and save work as 
 - No file watcher for external changes outside VS Code
 
 ## Release Notes
+
+### 0.4.0
+
+- **New Plan File** — command palette action scaffolds a `.plan.md` with correct frontmatter
+- **Search** — Ctrl+F / Cmd+F to search todos and markdown body with live highlights
+- **Export** — export as HTML, PDF, or Docx from the editor title bar or command palette
+
+### 0.3.0
+
+- **Status cycling** — click the status badge to cycle through pending → in-progress → completed
+- **Keyboard shortcut** — press Enter to quickly add a new task
+- **Test coverage** — 43 tests (up from 28), covering all serializer functions
 
 ### 0.2.0
 

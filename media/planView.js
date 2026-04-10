@@ -75,9 +75,18 @@
     // Don't fire shortcuts while editing text fields
     const active = document.activeElement;
     if (active?.getAttribute('contenteditable') === 'true') { return; }
-    if (active?.tagName === 'TEXTAREA' || active?.tagName === 'INPUT') { return; }
+    if (active?.tagName === 'TEXTAREA') { return; }
+    if (active === searchInput) { return; }
 
-    // Enter → add new task
+    // Ctrl/Cmd+F → open search
+    if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+      e.preventDefault();
+      openSearch();
+      return;
+    }
+
+    // Enter → add new task (only when input is not an <input>)
+    if (active?.tagName === 'INPUT') { return; }
     if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
       vscode.postMessage({ type: 'addTodo' });
@@ -341,4 +350,122 @@
     });
     return md;
   }
+  // ── In-webview search (Ctrl/Cmd+F) ───────────────────────────────
+  const searchBar = document.getElementById('planSearchBar');
+  const searchInput = document.getElementById('planSearchInput');
+  const searchCount = document.getElementById('planSearchCount');
+  const searchClose = document.getElementById('planSearchClose');
+
+  function openSearch() {
+    searchBar.hidden = false;
+    searchInput.focus();
+    searchInput.select();
+  }
+
+  function closeSearch() {
+    searchBar.hidden = true;
+    clearHighlights();
+    searchCount.textContent = '';
+    searchInput.value = '';
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll('.search-match').forEach(el => {
+      el.outerHTML = el.textContent;
+    });
+    document.querySelectorAll('.todo-item').forEach(el => {
+      el.classList.remove('search-hidden');
+    });
+  }
+
+  function runSearch(query) {
+    clearHighlights();
+    if (!query) { searchCount.textContent = ''; return; }
+
+    const escapedQuery = query.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+    const regex = new RegExp(`(${escapedQuery})`, 'gi');
+    let matchCount = 0;
+
+    // Replace text inside an element with highlighted markup, return match count.
+    function highlightElement(el) {
+      const text = el.textContent || '';
+      const matches = [...text.matchAll(regex)];
+      if (matches.length > 0) {
+        el.innerHTML = text.replaceAll(regex, '<mark class="search-match">$1</mark>');
+      }
+      return matches.length;
+    }
+
+    // Highlight in todo content spans
+    document.querySelectorAll('.todo-item').forEach(item => {
+      const contentSpan = item.querySelector('.todo-content');
+      if (!contentSpan) { return; }
+      const hits = highlightElement(contentSpan);
+      if (hits > 0) {
+        matchCount += hits;
+        item.classList.remove('search-hidden');
+      } else {
+        item.classList.add('search-hidden');
+      }
+    });
+
+    // Highlight in markdown body text nodes
+    const body = document.querySelector('.plan-body');
+    if (body) {
+      const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT);
+      const textNodes = [];
+      let node;
+      while ((node = walker.nextNode())) { textNodes.push(node); }
+
+      for (const tn of textNodes) {
+        const text = tn.textContent || '';
+        const matches = [...text.matchAll(regex)];
+        if (matches.length > 0) {
+          matchCount += matches.length;
+          const span = document.createElement('span');
+          span.innerHTML = text.replaceAll(regex, '<mark class="search-match">$1</mark>');
+          tn.parentNode.replaceChild(span, tn);
+        }
+      }
+    }
+
+    const suffix = matchCount === 1 ? 'match' : 'matches';
+    searchCount.textContent = matchCount > 0 ? `${matchCount} ${suffix}` : 'No matches';
+
+    // Scroll first match into view
+    const first = document.querySelector('.search-match');
+    if (first) { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }
+
+  if (searchInput) {
+    let debounceTimer;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => runSearch(searchInput.value.trim()), 120);
+    });
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeSearch(); }
+    });
+  }
+
+  if (searchClose) {
+    searchClose.addEventListener('click', closeSearch);
+  }
+
+  // ── Export ────────────────────────────────────────────────────────
+  // The extension host posts 'requestExport' via webview.postMessage();
+  // the webview replies with the full HTML snapshot for the host to write.
+  globalThis.addEventListener('message', (event) => {
+    if (event.origin && event.origin !== window.origin) { return; }
+    const msg = event.data;
+    if (msg?.type === 'requestExport') {
+      vscode.postMessage({
+        type: 'exportReady',
+        format: msg.format,
+        title: document.title,
+        html: document.documentElement.outerHTML,
+      });
+    }
+  });
+
 })();

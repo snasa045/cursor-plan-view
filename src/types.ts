@@ -68,6 +68,13 @@ export interface UpdateMessage {
   readonly html: string;
 }
 
+export interface ExportReadyMessage {
+  readonly type: 'exportReady';
+  readonly format: 'html' | 'pdf' | 'docx';
+  readonly title: string;
+  readonly html: string;
+}
+
 export type WebviewMessage =
   | ToggleTodoMessage
   | EditTodoContentMessage
@@ -75,6 +82,7 @@ export type WebviewMessage =
   | EditMarkdownBodyMessage
   | AddTodoMessage
   | DeleteTodoMessage
-  | ReorderTodosMessage;
+  | ReorderTodosMessage
+  | ExportReadyMessage;
 
 export type ExtensionMessage = UpdateMessage;

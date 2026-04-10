@@ -17,6 +17,77 @@ body {
   padding: 24px 32px;
 }
 
+/* ── Search Bar ───────────────────────────────────────────────────── */
+
+.plan-search-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--vscode-editorWidget-background, #252526);
+  border-bottom: 1px solid var(--vscode-panel-border, #444444);
+}
+
+.plan-search-bar[hidden] {
+  display: none;
+}
+
+.plan-search-input {
+  flex: 1;
+  padding: 5px 10px;
+  background: var(--vscode-input-background, #3c3c3c);
+  color: var(--vscode-input-foreground, #cccccc);
+  border: 1px solid var(--vscode-input-border, #555555);
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: inherit;
+  outline: none;
+}
+
+.plan-search-input:focus {
+  border-color: var(--vscode-focusBorder, #0078d4);
+}
+
+.plan-search-count {
+  font-size: 0.8em;
+  color: var(--vscode-descriptionForeground, #999999);
+  white-space: nowrap;
+  min-width: 72px;
+  text-align: right;
+}
+
+.plan-search-close {
+  border: none;
+  background: transparent;
+  color: var(--vscode-descriptionForeground, #999999);
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1;
+}
+
+.plan-search-close:hover {
+  color: var(--vscode-foreground, #cccccc);
+  background: var(--vscode-list-hoverBackground, #2a2d2e);
+}
+
+/* Search match highlight */
+mark.search-match {
+  background: var(--vscode-editor-findMatchHighlightBackground, #9e6a03);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* Hide non-matching todo items during a search */
+.todo-item.search-hidden {
+  display: none;
+}
+
 /* ── Header ───────────────────────────────────────────────────────── */
 
 .plan-header {

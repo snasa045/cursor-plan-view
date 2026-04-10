@@ -79,6 +79,13 @@ export function buildWebviewHtml(
   <title>${escapeHtml(name)}</title>
 </head>
 <body>
+  <div class="plan-search-bar" id="planSearchBar" hidden>
+    <input class="plan-search-input" id="planSearchInput" type="search"
+           placeholder="Search todos and notes\u2026" autocomplete="off" spellcheck="false">
+    <span class="plan-search-count" id="planSearchCount"></span>
+    <button class="plan-search-close" id="planSearchClose" type="button" title="Close search (Escape)">\u00d7</button>
+  </div>
+
   <div class="plan-container">
     <header class="plan-header">
       <h1 class="plan-title editable-field"

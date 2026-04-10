@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { parsePlanFile } from './parser';
 import { updateTodoStatus, updateTodoContent, updateFrontmatterField, updateMarkdownBody, addTodo, deleteTodo, reorderTodos } from './serializer';
 import { buildWebviewHtml } from './htmlBuilder';
+import { promptAndExport, handleExportReady } from './exportProvider';
 import { WebviewMessage } from './types';
 
 export class PlanEditorProvider implements vscode.CustomTextEditorProvider {
@@ -14,14 +15,29 @@ export class PlanEditorProvider implements vscode.CustomTextEditorProvider {
    */
   private suppressNextRerender = false;
 
+  /** The most-recently-focused plan webview panel — used by the export command. */
+  private activePanel: vscode.WebviewPanel | undefined;
+  private activeDocument: vscode.TextDocument | undefined;
+
   static register(context: vscode.ExtensionContext): vscode.Disposable {
-    return vscode.window.registerCustomEditorProvider(
-      PlanEditorProvider.viewType,
-      new PlanEditorProvider(context),
-      {
-        webviewOptions: { retainContextWhenHidden: true },
-        supportsMultipleEditorsPerDocument: false,
-      }
+    const provider = new PlanEditorProvider(context);
+
+    return vscode.Disposable.from(
+      vscode.window.registerCustomEditorProvider(
+        PlanEditorProvider.viewType,
+        provider,
+        {
+          webviewOptions: { retainContextWhenHidden: true },
+          supportsMultipleEditorsPerDocument: false,
+        }
+      ),
+      vscode.commands.registerCommand('cursorPlanView.exportPlan', () => {
+        if (!provider.activePanel) {
+          vscode.window.showWarningMessage('Open a plan file first to export it.');
+          return;
+        }
+        promptAndExport((msg) => provider.activePanel?.webview.postMessage(msg));
+      })
     );
   }
 
@@ -48,6 +64,16 @@ export class PlanEditorProvider implements vscode.CustomTextEditorProvider {
       vscode.Uri.joinPath(this.context.extensionUri, 'media', 'planView.js')
     );
 
+    // Track which panel is currently focused
+    webviewPanel.onDidChangeViewState(() => {
+      if (webviewPanel.active) {
+        this.activePanel = webviewPanel;
+        this.activeDocument = document;
+      }
+    });
+    this.activePanel = webviewPanel;
+    this.activeDocument = document;
+
     // Initial render
     this.updateWebview(document, webview, cssUri, jsUri);
 
@@ -65,7 +91,6 @@ export class PlanEditorProvider implements vscode.CustomTextEditorProvider {
 
     const messageSubscription = webview.onDidReceiveMessage(async (message: WebviewMessage) => {
       if (message.type === 'toggleTodo') {
-        // Checkbox toggles DO re-render (progress bar needs updating)
         this.handleToggleTodo(document, message.todoId, message.newStatus);
       } else if (message.type === 'editTodoContent') {
         this.handleInlineEdit(document, (text) => updateTodoContent(text, message.todoId, message.newContent));
@@ -82,12 +107,18 @@ export class PlanEditorProvider implements vscode.CustomTextEditorProvider {
       } else if (message.type === 'reorderTodos') {
         const currentText = document.getText();
         await this.applyEdit(document, currentText, reorderTodos(currentText, message.orderedIds));
+      } else if (message.type === 'exportReady') {
+        await handleExportReady(document.uri, message.format, message.title, message.html);
       }
     });
 
     webviewPanel.onDidDispose(() => {
       changeSubscription.dispose();
       messageSubscription.dispose();
+      if (this.activePanel === webviewPanel) {
+        this.activePanel = undefined;
+        this.activeDocument = undefined;
+      }
     });
   }
 

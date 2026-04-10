@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+- **New Plan File** — command palette action "New Plan File" scaffolds a `.plan.md` with correct frontmatter and two placeholder tasks
+- **Search** — press Ctrl+F / Cmd+F to open an in-webview search bar; highlights matches in todos and markdown body, with match count and Escape to close
+- **Export** — export plan as HTML (standalone), PDF (browser print dialog), or Docx (Word-compatible); accessible via command palette and editor title bar icon
+
 ## 0.3.0
 
 - **Status cycling** — click the status badge to cycle through pending → in-progress → completed
