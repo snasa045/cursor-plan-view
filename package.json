@@ -2,7 +2,7 @@
   "name": "cursor-plan-view",
   "displayName": "Cursor Plan View",
   "description": "Rich plan viewer for .plan.md files with interactive todo checklists, progress bars, and markdown rendering — matching Cursor IDE's native plan experience.",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "publisher": "nasares",
   "license": "MIT",
   "engines": {

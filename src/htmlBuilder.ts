@@ -138,7 +138,7 @@ function buildTodoItem(todo: PlanTodo): string {
   <span class="todo-drag-handle" title="Drag to reorder">\u2261</span>
   <input type="checkbox" class="todo-checkbox" ${checked}>
   <span class="todo-content">${escapeHtml(todo.content)}</span>
-  <span class="todo-status-badge ${badgeClass}">${escapeHtml(displayStatus)}</span>
+  <span class="todo-status-badge ${badgeClass}" data-status="${todo.status}">${escapeHtml(displayStatus)}</span>
   <button class="todo-delete-btn" type="button" title="Delete">\u00d7</button>
 </label>`;
 }

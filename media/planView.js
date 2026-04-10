@@ -53,6 +53,37 @@
     });
   }
 
+  // ── Status badge cycling (pending → in-progress → completed) ──────
+  const statusCycle = ['pending', 'in-progress', 'completed'];
+
+  document.querySelectorAll('.todo-status-badge').forEach((badge) => {
+    badge.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const todoItem = badge.closest('.todo-item');
+      const todoId = todoItem?.dataset.todoId;
+      if (!todoId) { return; }
+      const currentStatus = badge.dataset.status || 'pending';
+      const currentIdx = statusCycle.indexOf(currentStatus);
+      const nextStatus = statusCycle[(currentIdx + 1) % statusCycle.length];
+      vscode.postMessage({ type: 'toggleTodo', todoId, newStatus: nextStatus });
+    });
+  });
+
+  // ── Keyboard shortcuts ────────────────────────────────────────────
+  document.addEventListener('keydown', (e) => {
+    // Don't fire shortcuts while editing text fields
+    const active = document.activeElement;
+    if (active?.getAttribute('contenteditable') === 'true') { return; }
+    if (active?.tagName === 'TEXTAREA' || active?.tagName === 'INPUT') { return; }
+
+    // Enter → add new task
+    if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      vscode.postMessage({ type: 'addTodo' });
+    }
+  });
+
   // ── Status filter ──────────────────────────────────────────────────
   document.querySelectorAll('.todo-filter-btn').forEach((btn) => {
     btn.addEventListener('click', () => {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+- **Status cycling** — click the status badge to cycle through pending → in-progress → completed
+- **Keyboard shortcut** — press Enter to quickly add a new task
+- **Test coverage** — 43 tests (up from 28), covering all serializer functions
+
 ## 0.2.0
 
 - **Scroll position preservation** — scroll position is maintained across checkbox toggles, add/delete, and undo/redo
